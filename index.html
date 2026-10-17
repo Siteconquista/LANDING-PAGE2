@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gerador de nota de venda em PDF</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--tx:#18202e;--mut:#5f6b7e;--ac:#2563eb;--acx:#fff;--bd:#d9dfea;--sheet:#fff;--stx:#111;--wb:#fff7e0;--wt:#7a5a00;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e131c;--card:#171e2b;--tx:#e8edf6;--mut:#94a0b5;--ac:#5b8cff;--acx:#06122b;--bd:#2a3447;--wb:#2b2410;--wt:#f2d98a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0e131c;--card:#171e2b;--tx:#e8edf6;--mut:#94a0b5;--ac:#5b8cff;--acx:#06122b;--bd:#2a3447;--wb:#2b2410;--wt:#f2d98a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:1040px;margin:0 auto;padding:20px}
+h1{font-size:26px;margin:4px 0}.sub{color:var(--mut);margin:0 0 14px}
+.warn{background:var(--wb);color:var(--wt);border-radius:10px;padding:10px 14px;font-size:14px;margin-bottom:18px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+@media(max-width:800px){.g{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px}
+h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ac);margin:20px 0 6px;padding-top:14px;border-top:1px solid var(--bd)}h3:first-child{margin-top:0;padding-top:0;border:0}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px;font-weight:600}
+input[type=text],input[type=tel],input[type=number],input[type=date],textarea{width:100%;padding:10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font:inherit}
+textarea{min-height:70px;resize:vertical}input[type=file]{width:100%;font-size:14px;color:var(--mut)}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.it{display:grid;grid-template-columns:1fr 58px 100px 34px;gap:6px;margin-bottom:6px}
+.x{border:1px solid var(--bd);background:transparent;color:var(--mut);border-radius:10px;font-size:18px;cursor:pointer}
+.add{background:transparent;border:1px dashed var(--ac);color:var(--ac);border-radius:10px;padding:9px;width:100%;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.btn{width:100%;margin-top:18px;background:var(--ac);color:var(--acx);border:0;border-radius:12px;padding:14px;font:700 17px inherit;font-family:inherit;cursor:pointer}
+.msg{font-size:14px;margin-top:10px;min-height:20px;color:var(--mut)}
+.sheet{background:var(--sheet);color:var(--stx);border-radius:6px;border-top:8px solid #2563eb;padding:6% 7%;aspect-ratio:210/297;box-shadow:0 6px 24px rgba(0,0,0,.18);font-family:Helvetica,Arial,sans-serif;font-size:12px}
+.hd{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:2px solid #2563eb}
+.ph{width:54px;height:54px;border-radius:5px;background:center/contain no-repeat;flex:none;display:none}
+.nm{font-size:17px;font-weight:700;line-height:1.15;word-break:break-word}.nm small{display:block;font-weight:400;font-size:11px;color:#555;margin-top:2px}
+.nn{margin-left:auto;text-align:right;white-space:nowrap;font-size:11px;color:#555}.nn b{display:block;color:#2563eb;font-size:12px}
+.sec{border-bottom:1px solid #bbb;padding:10px 0}
+.lb{font-size:9px;color:#777;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#f3f4f6;text-align:left;padding:5px 4px;font-size:9px;color:#555}
+td{padding:5px 4px;border-bottom:1px solid #e5e5e5;word-break:break-word}
+th:nth-child(n+2),td:nth-child(n+2){text-align:right;white-space:nowrap}
+.tt{margin:12px 0 0 auto;width:62%;background:#f3f4f6;border:1px solid #bbb;border-radius:4px;padding:8px 10px;display:flex;justify-content:space-between;align-items:center}.tt b{font-size:17px}
+.ft{font-size:9px;color:#888;margin-top:12px;text-align:center}
+.pt{color:var(--mut);text-align:center;font-size:13px;margin-top:8px}
+.ck{display:flex;gap:8px;align-items:center;font-size:15px;color:var(--tx);font-weight:600;margin:4px 0 8px}.ck input{width:18px;height:18px}
+.lk{background:none;border:0;color:var(--ac);font:600 13px inherit;font-family:inherit;cursor:pointer;padding:6px 0}
+.sg{display:block;width:100%;text-align:left;background:var(--bg);border:1px dashed var(--ac);border-radius:10px;padding:10px 12px;color:var(--tx);font:13px/1.45 inherit;font-family:inherit;cursor:pointer;margin-top:8px}.sg b{color:var(--ac)}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>Gerador de nota de venda em PDF</h1>
+<p class="sub">Preencha os dados, confira a prévia e gere o PDF.</p>
+<div class="g">
+<div class="card">
+<h3>Sua empresa</h3>
+<label for="foto">Foto ou logo</label><input type="file" id="foto" accept="image/*">
+<label for="nome">Nome da empresa</label><input type="text" id="nome" maxlength="60" placeholder="Ex.: Padaria Pão Quente">
+<label for="tel">Celular da empresa</label><input type="tel" id="tel" inputmode="numeric" placeholder="(77) 99999-9999">
+<h3>Nota</h3>
+<div class="r2"><div><label for="num">Número</label><input type="text" id="num" value="0001" maxlength="10"></div><div><label for="data">Data</label><input type="date" id="data"></div></div>
+<h3>Cliente</h3>
+<label for="cn">Nome do cliente</label><input type="text" id="cn" maxlength="60" placeholder="Ex.: Maria da Silva">
+<label for="ct">Telefone do cliente</label><input type="tel" id="ct" inputmode="numeric" placeholder="(77) 99999-9999">
+<h3>Itens</h3>
+<div id="its"></div>
+<button type="button" class="add" id="ai">+ Adicionar item</button>
+<h3>Observações</h3>
+<textarea id="obs" placeholder="Forma de pagamento, prazo, garantia... (opcional)"></textarea>
+<h3>Rodapé</h3>
+<label class="ck"><input type="checkbox" id="rodon"> Adicionar rodapé no PDF</label>
+<textarea id="rod" aria-label="Texto do rodapé" placeholder="Digite o texto do rodapé..."></textarea>
+<button type="button" class="sg" id="rst"><b>Sugestão (toque para usar):</b><br>Diego Empreendimentos agradece pela preferência e confiança! Estamos sempre à disposição para oferecer qualidade, compromisso e excelência em nossos serviços.</button>
+<button class="btn" id="gerar">Gerar PDF</button>
+<div class="msg" id="msg"></div>
+</div>
+<div>
+<div class="sheet">
+<div class="hd"><div class="ph" id="pph"></div><div class="nm"><span id="pnm">Nome da empresa</span><small id="ptl">(00) 00000-0000</small></div><div class="nn"><b>NOTA DE VENDA</b><span id="pnum"></span><br><span id="pdt"></span></div></div>
+<div class="sec"><div class="lb">Cliente</div><div id="pcn"></div><div id="pct"></div></div>
+<div class="sec"><div class="lb">Itens</div><table><thead><tr><th>Descrição</th><th>Qtd</th><th>Unit.</th><th>Subtotal</th></tr></thead><tbody id="pit"></tbody></table></div>
+<div class="sec" id="pos" style="display:none"><div class="lb">Observações</div><div id="pob" style="white-space:pre-wrap"></div></div>
+<div class="tt"><span class="lb" style="margin:0">Total</span><b id="ptot">R$ 0,00</b></div>
+<div class="ft" id="pfr" style="display:none;font-style:italic"></div>
+</div>
+<div class="pt">Prévia do PDF</div>
+</div>
+</div>
+</div>
+
+<script>
+var $=function(i){return document.getElementById(i)};
+var imgData=null,imgW=0,imgH=0,items=[{d:'',q:1,v:0}];
+function brl(c){return 'R$ '+(c/100).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function mt(v){var d=v.replace(/\D/g,'').slice(0,11);
+if(d.length>7)return '('+d.slice(0,2)+') '+d.slice(2,7)+'-'+d.slice(7);
+if(d.length>2)return '('+d.slice(0,2)+') '+d.slice(2);return d?'('+d:''}
+function total(){return items.reduce(function(s,i){return s+Math.round(i.q*i.v)},0)}
+function dt(){var v=$('data').value;return v?v.split('-').reverse().join('/'):''}
+function cell(tr,t){var c=document.createElement('td');c.textContent=t;tr.appendChild(c)}
+function prev(){
+$('pnm').textContent=$('nome').value.trim()||'Nome da empresa';
+$('ptl').textContent=$('tel').value||'(00) 00000-0000';
+$('pnum').textContent='Nº '+($('num').value||'0001');$('pdt').textContent=dt();
+$('pcn').textContent=$('cn').value.trim()||'Nome do cliente';$('pct').textContent=$('ct').value||'(00) 00000-0000';
+var b=$('pit');b.innerHTML='';
+items.forEach(function(it){if(!it.d.trim()&&!it.v)return;var tr=document.createElement('tr');
+cell(tr,it.d||'—');cell(tr,String(it.q));cell(tr,brl(it.v));cell(tr,brl(Math.round(it.q*it.v)));b.appendChild(tr)});
+if(!b.children.length){var tr=document.createElement('tr');cell(tr,'Adicione os itens');b.appendChild(tr)}
+var o=$('obs').value.trim();$('pos').style.display=o?'block':'none';$('pob').textContent=o;
+$('ptot').textContent=brl(total());var rf=$('rodon').checked?$('rod').value.trim():'';$('pfr').style.display=rf?'block':'none';$('pfr').textContent=rf}
+function mk(){var box=$('its');box.innerHTML='';
+items.forEach(function(it,i){var r=document.createElement('div');r.className='it';
+var a=document.createElement('input');a.type='text';a.placeholder='Descrição';a.value=it.d;a.oninput=function(){it.d=a.value;prev()};
+var q=document.createElement('input');q.type='number';q.min=1;q.value=it.q;q.oninput=function(){it.q=Math.max(0,+q.value||0);prev()};
+var v=document.createElement('input');v.type='text';v.inputMode='numeric';v.placeholder='R$ 0,00';v.value=it.v?brl(it.v):'';
+v.oninput=function(){var s=v.value.replace(/\D/g,'').slice(0,9);it.v=+s||0;v.value=s?brl(it.v):'';prev()};
+var x=document.createElement('button');x.type='button';x.className='x';x.textContent='×';x.setAttribute('aria-label','Remover item');
+x.onclick=function(){if(items.length>1){items.splice(i,1);mk();prev()}};
+r.appendChild(a);r.appendChild(q);r.appendChild(v);r.appendChild(x);box.appendChild(r)})}
+$('ai').onclick=function(){items.push({d:'',q:1,v:0});mk()};
+$('tel').oninput=function(){this.value=mt(this.value);prev()};
+$('ct').oninput=function(){this.value=mt(this.value);prev()};
+['nome','num','data','cn','obs','rod'].forEach(function(i){$(i).oninput=prev});
+var FRASE='Diego Empreendimentos agradece pela preferência e confiança! Estamos sempre à disposição para oferecer qualidade, compromisso e excelência em nossos serviços.';
+$('rodon').onchange=prev;$('rod').oninput=function(){if(this.value.trim())$('rodon').checked=true;prev()};$('rst').onclick=function(){$('rodon').checked=true;$('rod').value=FRASE;prev()};
+$('data').value=new Date().toISOString().slice(0,10);
+$('foto').onchange=function(){var f=this.files[0];if(!f){imgData=null;$('pph').style.display='none';return}
+var r=new FileReader();r.onload=function(){var im=new Image();
+im.onload=function(){var s=Math.min(1,600/Math.max(im.width,im.height)),w=Math.round(im.width*s),h=Math.round(im.height*s);
+var c=document.createElement('canvas');c.width=w;c.height=h;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+imgData=c.toDataURL('image/jpeg',.9);imgW=w;imgH=h;$('pph').style.backgroundImage='url('+imgData+')';$('pph').style.display='block'};
+im.onerror=function(){$('msg').textContent='Não consegui ler essa imagem. Tente outra.'};im.src=r.result};r.readAsDataURL(f)};
+
+$('gerar').onclick=async function(){
+var nome=$('nome').value.trim(),cn=$('cn').value.trim();
+var its=items.filter(function(i){return i.d.trim()||i.v});
+if(!nome){$('msg').textContent='Digite o nome da empresa.';return}
+if(!cn){$('msg').textContent='Digite o nome do cliente.';return}
+if(!its.length){$('msg').textContent='Adicione pelo menos um item.';return}
+try{
+var J=window.jspdf.jsPDF,d=new J({unit:'mm',format:'a4'}),M=20,PW=210,y=16,x=M,HT=30;
+var num=$('num').value.trim()||'0001',tel=$('tel').value,ct=$('ct').value,obs=$('obs').value.trim();
+d.setFillColor(37,99,235);d.rect(0,0,PW,6,'F');
+if(imgData){var k=Math.min(HT/imgW,HT/imgH),w=imgW*k,h=imgH*k;d.addImage(imgData,'JPEG',M,y+(HT-h)/2,w,h);x=M+HT+6}
+d.setFont('helvetica','bold');d.setFontSize(13);d.setTextColor(37,99,235);d.text('NOTA DE VENDA',PW-M,y+8,{align:'right'});
+d.setFontSize(11);d.setTextColor(17);d.text('Nº '+num,PW-M,y+15,{align:'right'});
+d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(90);d.text(dt(),PW-M,y+21,{align:'right'});
+d.setFont('helvetica','bold');d.setFontSize(18);d.setTextColor(17);
+var t=d.splitTextToSize(nome,PW-M-x-50),th=t.length*7.5,bh=th+(tel?7:0),top=y+(HT-bh)/2+6;
+d.text(t,x,top);
+if(tel){d.setFont('helvetica','normal');d.setFontSize(11);d.setTextColor(90);d.text(tel,x,top+(t.length-1)*7.5+7)}
+y+=HT+4;d.setDrawColor(37,99,235);d.setLineWidth(0.8);d.line(M,y,PW-M,y);d.setLineWidth(0.2);d.setDrawColor(190);y+=9;
+function lab(s){d.setFont('helvetica','bold');d.setFontSize(9);d.setTextColor(120);d.text(s,M,y);y+=7}
+function sep(){y+=1;d.setDrawColor(190);d.line(M,y,PW-M,y);y+=9}
+lab('CLIENTE');d.setFont('helvetica','normal');d.setFontSize(12);d.setTextColor(17);d.text(cn,M,y);
+if(ct){y+=6;d.setTextColor(90);d.text(ct,M,y)}y+=1;sep();
+lab('ITENS');
+d.setFillColor(243,244,246);d.rect(M,y-5,PW-2*M,8,'F');d.setFont('helvetica','bold');d.setFontSize(8);d.setTextColor(90);
+d.text('DESCRIÇÃO',M+2,y);d.text('QTD',118,y,{align:'right'});d.text('VALOR UNIT.',152,y,{align:'right'});d.text('SUBTOTAL',PW-M-2,y,{align:'right'});y+=8;
+its.forEach(function(it){var ln=d.splitTextToSize(it.d.trim()||'—',82),n=ln.length;
+if(y+n*5>262){d.addPage();y=M}
+d.setFont('helvetica','normal');d.setFontSize(11);d.setTextColor(17);
+ln.forEach(function(l,j){d.text(l,M+2,y+j*5)});
+d.text(String(it.q),118,y,{align:'right'});d.text(brl(it.v),152,y,{align:'right'});d.text(brl(Math.round(it.q*it.v)),PW-M-2,y,{align:'right'});
+var e=y+(n-1)*5+3;d.setDrawColor(225);d.line(M,e,PW-M,e);y=e+6});
+y+=1;sep();
+if(obs){if(y>235){d.addPage();y=M}lab('OBSERVAÇÕES');d.setFont('helvetica','normal');d.setFontSize(10);d.setTextColor(17);
+d.splitTextToSize(obs,PW-2*M).forEach(function(l){if(y>266){d.addPage();y=M}d.text(l,M,y);y+=5});y-=2;sep()}
+if(y>245){d.addPage();y=M}
+d.setFillColor(243,244,246);d.setDrawColor(190);d.roundedRect(PW-M-80,y-4,80,20,2,2,'FD');
+d.setFont('helvetica','bold');d.setFontSize(9);d.setTextColor(120);d.text('TOTAL',PW-M-75,y+7);
+d.setFontSize(18);d.setTextColor(17);d.text(brl(total()),PW-M-5,y+8,{align:'right'});
+var rf=$('rodon').checked?$('rod').value.trim():'';
+if(rf){var fl=d.splitTextToSize(rf,PW-2*M-20),fy=279-fl.length*5;if(y+20>fy){d.addPage()}
+d.setFont('helvetica','italic');d.setFontSize(10);d.setTextColor(90);fl.forEach(function(l,j){d.text(l,PW/2,fy+j*5,{align:'center'})})}
+var np=d.getNumberOfPages();
+for(var p=1;p<=np;p++){d.setPage(p);d.setDrawColor(190);d.line(M,283,PW-M,283);d.setFont('helvetica','normal');d.setFontSize(8);d.setTextColor(140);
+d.text('Gerado em '+new Date().toLocaleDateString('pt-BR'),M,288);d.text('Página '+p+' de '+np,PW-M,288,{align:'right'})}
+var fn='nota-'+num.replace(/[^\w-]+/g,'');
+d.save(fn+'.pdf');
+$('msg').textContent='PDF pronto.'
+}catch(e){$('msg').textContent='Não foi possível gerar o PDF. Tente de novo.'}};
+mk();prev();
+</script>
+</body>
+</html>
